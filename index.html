@@ -1,20 +1,81 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
     />
+    <style>
+      .centered-container {
+        width: 100%; /* Ajusta el ancho al 100% para dispositivos más pequeños */
+        margin: 0 auto; /* Centra el contenedor */
+        padding: 20px;
+      }
+
+      @media (min-width: 768px) {
+        .centered-container {
+            width: 50%; /* Ajusta el ancho al 50% para pantallas más grandes */
+        }
+      }
+
+      .hero-body .container, #form {
+        padding: 20px;
+      }
+
+      .university-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      
+      
+      .reduced-height {
+        padding-top: 1.5rem; /* Reduce el padding superior */
+        padding-bottom: 1.5rem; /* Reduce el padding inferior */
+      }
+
+      .university-header p {
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+        font-weight: bold;
+      }
+      
+      
+      
+    </style>
   </head>
   <body>
-    <section class="hero is-primary is-bold">
-      <div class="hero-body">
-        <div class="container">
-          <h1 class="title">Formulario de estudiantes</h1>
+    <div class="centered-container">
+      <div class="university-header">
+        <h6>UNIVERSIDAD NACIONAL DE EDUCACIÓN</h6>
+                    <h5>Enrique Guzmán y Valle</h5>
+                    <h6><em>Alma Máter del Magisterio Nacional</em></h6>
+                    <!-- Asegúrate de reemplazar 'url_del_logo' con la URL real del logotipo -->
+                    <img src="https://www.une.edu.pe/test/images/logoune.gif" alt="Logo" style="max-width: 100px;"/>
+                    <h5>FACULTAD DE CIENCIAS SOCIALES Y HUMANIDADES</h5>
+                    <h6>ESCUELA PROFESIONAL DE COMUNICACIÓN</h6>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <section class="hero is-primary is-bold">
+        <div class="hero-body reduced-height">
+          <div class="container has-text-centered">
+            <h2 class="title">Formulario de Estudiantes</h2>
         </div>
       </div>
     </section>
-    <form id="form" class="container m-4 pl-4" method="POST" enctype="multipart/form-data">
+    
+   <div class="form-container">
+    <form id="form" method="POST" enctype="multipart/form-data">
+      <!-- Campo Nombres -->
       <div class="field">
         <label class="label">Nombres</label>
         <div class="control">
@@ -22,15 +83,13 @@
             class="input"
             type="text"
             placeholder="Nombres"
-            name="Nombres" 
+            name="Nombres"
+            required
           />
         </div>
       </div>
 
-      
-      
-      
-      
+      <!-- Campo Apellidos -->
       <div class="field">
         <label class="label">Apellidos</label>
         <div class="control">
@@ -38,13 +97,13 @@
             class="input"
             type="text"
             placeholder="Apellidos"
-            name="Apellidos" 
+            name="Apellidos"
+            required
           />
         </div>
       </div>
-      
-      
 
+      <!-- Campo Email -->
       <div class="field">
         <label class="label">Email</label>
         <div class="control">
@@ -53,10 +112,12 @@
             type="email"
             placeholder="Tu correo"
             name="Email"
+            required
           />
         </div>
       </div>
 
+      <!-- Campo DNI -->
       <div class="field">
         <label class="label">Tu DNI</label>
         <div class="control">
@@ -65,41 +126,39 @@
             type="text"
             placeholder="Tu DNI"
             name="DNI"
+            required
           />
         </div>
       </div>
 
-      
-
+      <!-- Campo Género -->
       <div class="field">
         <label class="label">Género</label>
         <div class="control">
           <label class="radio">
-            <input type="radio" name="Genero" value="male" /> Masculino
+            <input type="radio" name="Genero" value="Hombre" required /> Hombre
           </label>
           <label class="radio">
-            <input type="radio" name="Genero" value="female" /> Femenino
+            <input type="radio" name="Genero" value="Mujer" required /> Mujer
           </label>
         </div>
       </div>
 
-      
-<!--name es el nombre de la columna del google sheet "Notas" asi con el resto de columnas-->
+      <!-- Campo Expectativas -->
       <div class="field">
-        <label class="label">Espectativas del Diplomado:</label>
+        <label class="label">Expectativas del Diplomado:</label>
         <div class="control">
           <textarea
             class="textarea"
             placeholder="Escribir.."
             name="Espectativas"
+            required
           ></textarea>
         </div>
       </div>
-      
-      
-      
 
-         <div class="field is-grouped">
+      <!-- Botones -->
+      <div class="field is-grouped">
         <div class="control">
           <button class="button is-primary" type="submit" id="submit-button">
             Enviar
@@ -110,6 +169,9 @@
         </div>
       </div>
     </form>
+    </div>
+
+    <!-- Mensaje de confirmación -->
     <div
       id="message"
       style="
@@ -120,68 +182,92 @@
         padding: 8px;
         background-color: beige;
         border-radius: 4px;
-        border-color: aquamarine; 
+        border-color: aquamarine;
       "
     ></div>
+    
+    
+    
+   
 
+    
+    
+    
+    
+    
+
+    <!-- Script para el envío del formulario -->
     <script>
+      function capitalizeWords(string) {
+        return string.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+      }
+
       document.getElementById("form").addEventListener("submit", function (e) {
         e.preventDefault(); // Prevent the default form submission
+
+        // Formatear Nombres y Apellidos
+        var nombres = document.getElementsByName("Nombres")[0];
+        var apellidos = document.getElementsByName("Apellidos")[0];
+        nombres.value = capitalizeWords(nombres.value);
+        apellidos.value = capitalizeWords(apellidos.value);
+
+        // Mensaje de envío
         document.getElementById("message").textContent = "Submitting..";
         document.getElementById("message").style.display = "block";
         document.getElementById("submit-button").disabled = true;
+        
+        
+        
+        
+    
+ 
 
-        // Collect the form data
+        // Recolectar datos del formulario
         var formData = new FormData(this);
         var keyValuePairs = [];
         for (var pair of formData.entries()) {
-          keyValuePairs.push(pair[0] + "=" + pair[1]);
+                    keyValuePairs.push(pair[0] + "=" + encodeURIComponent(pair[1]));
         }
 
         var formDataString = keyValuePairs.join("&");
 
-        // Send a POST request to your Google Apps Script
-        fetch(
-          "https://script.google.com/macros/s/AKfycbyoceHjZl484ypJzJw90FC0qhbyWdI7ZLFp8UOAC1xHPJkr_1LFRGQiGoZpQuenZQ/exec",
-          {
-            redirect: "follow",
-            method: "POST",
-            body: formDataString,
-            headers: {
-              "Content-Type": "text/plain;charset=utf-8",
-            },
+        // Enviar una solicitud POST a tu Google Apps Script
+        fetch("https://script.google.com/macros/s/AKfycbyoceHjZl484ypJzJw90FC0qhbyWdI7ZLFp8UOAC1xHPJkr_1LFRGQiGoZpQuenZQ/exec", {
+          redirect: "follow",
+          method: "POST",
+          body: formDataString,
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+        })
+        .then(function(response) {
+          // Verificar si la solicitud fue exitosa
+          if (response) {
+            return response.text(); // Asumiendo que tu script devuelve una respuesta en texto
+          } else {
+            throw new Error("Failed to submit the form.");
           }
-        )
-          .then(function (response) {
-            // Check if the request was successful
-            if (response) {
-              return response; // Assuming your script returns JSON response
-            } else {
-              throw new Error("Failed to submit the form.");
-            }
-          })
-          .then(function (data) {
-            // Display a success message
-            document.getElementById("message").textContent =
-              "Data submitted successfully!";
-            document.getElementById("message").style.display = "block";
-            document.getElementById("message").style.backgroundColor = "green";
-            document.getElementById("message").style.color = "beige";
-            document.getElementById("submit-button").disabled = false;
-            document.getElementById("form").reset();
+        })
+        .then(function(text) {
+          // Mostrar un mensaje de éxito
+          document.getElementById("message").textContent = "Data submitted successfully!";
+          document.getElementById("message").style.display = "block";
+          document.getElementById("message").style.backgroundColor = "green";
+          document.getElementById("message").style.color = "beige";
+          document.getElementById("submit-button").disabled = false;
+          document.getElementById("form").reset();
 
-            setTimeout(function () {
-              document.getElementById("message").textContent = "";
-              document.getElementById("message").style.display = "none";
-            }, 2600);
-          })
-          .catch(function (error) {
-            // Handle errors, you can display an error message here
-            console.error(error);
-            document.getElementById("message").textContent =
-              "An error occurred while submitting the form.";
-            document.getElementById("message").style.display = "block";
-          });
+          setTimeout(function() {
+            document.getElementById("message").textContent = "";
+            document.getElementById("message").style.display = "none";
+          }, 2600);
+        })
+        .catch(function(error) {
+          // Manejar errores
+          console.error(error);
+          document.getElementById("message").textContent = "An error occurred while submitting the form.";
+          document.getElementById("message").style.display = "block";
+        });
       });
     </script>
   </body>
