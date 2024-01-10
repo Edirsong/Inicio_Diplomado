@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+  </head>
+  <body>
+    <section class="hero is-primary is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">Formulario de estudiantes</h1>
+        </div>
+      </div>
+    </section>
+    <form id="form" class="container m-4 pl-4" method="POST" enctype="multipart/form-data">
+      <div class="field">
+        <label class="label">Nombres</label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            placeholder="Nombres"
+            name="Nombres" 
+          />
+        </div>
+      </div>
+
+      
+      
+      
+      
+      <div class="field">
+        <label class="label">Apellidos</label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            placeholder="Apellidos"
+            name="Apellidos" 
+          />
+        </div>
+      </div>
+      
+      
+
+      <div class="field">
+        <label class="label">Email</label>
+        <div class="control">
+          <input
+            class="input"
+            type="email"
+            placeholder="Tu correo"
+            name="Email"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Tu DNI</label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            placeholder="Tu DNI"
+            name="DNI"
+          />
+        </div>
+      </div>
+
+      
+
+      <div class="field">
+        <label class="label">Género</label>
+        <div class="control">
+          <label class="radio">
+            <input type="radio" name="Genero" value="male" /> Masculino
+          </label>
+          <label class="radio">
+            <input type="radio" name="Genero" value="female" /> Femenino
+          </label>
+        </div>
+      </div>
+
+      
+<!--name es el nombre de la columna del google sheet "Notas" asi con el resto de columnas-->
+      <div class="field">
+        <label class="label">Espectativas del Diplomado:</label>
+        <div class="control">
+          <textarea
+            class="textarea"
+            placeholder="Escribir.."
+            name="Espectativas"
+          ></textarea>
+        </div>
+      </div>
+      
+      
+      
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-primary" type="submit" id="submit-button">Enviar</button>
+            </div>
+            <div class="control">
+                <button class="button is-danger" type="reset">Cancelar</button>
+            </div>
+        </div>
+    </form>
+    <div id="message" style="display: none; margin: 20px; font-weight: bold; color: green; padding: 8px; background-color: beige; border-radius: 4px; border-color: aquamarine;"></div>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', function(e) {
+            var archivo = document.getElementById('archivo');
+            if (archivo.files.length > 0) {
+                var tamaño = archivo.files[0].size / 1024 / 1024; // Tamaño en MB
+                if (tamaño > 5) { // 5 MB es el límite
+                    e.preventDefault();
+                    alert('El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.');
+                    return false;
+                }
+            }
+
+            // Prevent the default form submission
+            e.preventDefault();
+            document.getElementById("message").textContent = "Submitting..";
+            document.getElementById("message").style.display = "block";
+            document.getElementById("submit-button").disabled = true;
+
+            // Collect the form data
+            var formData = new FormData(this);
+            var keyValuePairs = [];
+            for (var pair of formData.entries()) {
+                keyValuePairs.push(pair[0] + "=" + pair[1]);
+            }
+
+            var formDataString = keyValuePairs.join("&");
+
+            // Send a POST request to your Google Apps Script
+            fetch("https://script.google.com/macros/s/AKfycbxaxnIp4CtkNeJvhXVJWCopOgvGuAIg8nxryvGzXqDoT9WvsqusF8peU3dYGWygiE4M/exec", {
+                redirect: "follow",
+                method: "POST",
+                body: formDataString,
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+            })
+            .then(function (response) {
+                // Check if the request was successful
+                if (response) {
+                    return response; // Assuming your script returns JSON response
+                } else {
+                    throw new Error("Failed to submit the form.");
+                }
+            })
+            .then(function (data) {
+                // Display a success message
+                document.getElementById("message").textContent = "Formulario enviado con éxito.";
+                document.getElementById("message").style.display = "block";
+                document.getElementById("message").style.backgroundColor = "green";
+                document.getElementById("message").style.color = "beige";
+                document.getElementById("submit-button").disabled = false;
+                document.getElementById("form").reset();
+
+                setTimeout(function () {
+                    document.getElementById("message").textContent = "";
+                    document.getElementById("message").style.display = "none";
+                }, 2600);
+            })
+            .catch(function (error) {
+                // Handle errors
+                console.error(error);
+                document.getElementById("message").textContent = "An error occurred while submitting the form.";
+                document.getElementById("message").style.display = "block";
+            });
+        });
+    </script>
+</body>
+</html>
