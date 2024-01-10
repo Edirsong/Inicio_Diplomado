@@ -99,82 +99,90 @@
       
       
 
-        <div class="field is-grouped">
-            <div class="control">
-                <button class="button is-primary" type="submit" id="submit-button">Enviar</button>
-            </div>
-            <div class="control">
-                <button class="button is-danger" type="reset">Cancelar</button>
-            </div>
+         <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary" type="submit" id="submit-button">
+            Enviar
+          </button>
         </div>
+        <div class="control">
+          <button class="button is-danger">Cancelar</button>
+        </div>
+      </div>
     </form>
-    <div id="message" style="display: none; margin: 20px; font-weight: bold; color: green; padding: 8px; background-color: beige; border-radius: 4px; border-color: aquamarine;"></div>
+    <div
+      id="message"
+      style="
+        display: none;
+        margin: 20px;
+        font-weight: bold;
+        color: green;
+        padding: 8px;
+        background-color: beige;
+        border-radius: 4px;
+        border-color: aquamarine; 
+      "
+    ></div>
 
     <script>
-        document.getElementById('form').addEventListener('submit', function(e) {
-            var archivo = document.getElementById('archivo');
-            if (archivo.files.length > 0) {
-                var tamaño = archivo.files[0].size / 1024 / 1024; // Tamaño en MB
-                if (tamaño > 5) { // 5 MB es el límite
-                    e.preventDefault();
-                    alert('El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.');
-                    return false;
-                }
-            }
+      document.getElementById("form").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent the default form submission
+        document.getElementById("message").textContent = "Submitting..";
+        document.getElementById("message").style.display = "block";
+        document.getElementById("submit-button").disabled = true;
 
-            // Prevent the default form submission
-            e.preventDefault();
-            document.getElementById("message").textContent = "Submitting..";
+        // Collect the form data
+        var formData = new FormData(this);
+        var keyValuePairs = [];
+        for (var pair of formData.entries()) {
+          keyValuePairs.push(pair[0] + "=" + pair[1]);
+        }
+
+        var formDataString = keyValuePairs.join("&");
+
+        // Send a POST request to your Google Apps Script
+        fetch(
+          "https://script.google.com/macros/s/AKfycbxeZHeliCUddr0OoP856xIRMwwxzgA08X9mudoHd97uK0J_8HDdcIUZFT2czKQf-bgTOA/exec",
+          {
+            redirect: "follow",
+            method: "POST",
+            body: formDataString,
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+          }
+        )
+          .then(function (response) {
+            // Check if the request was successful
+            if (response) {
+              return response; // Assuming your script returns JSON response
+            } else {
+              throw new Error("Failed to submit the form.");
+            }
+          })
+          .then(function (data) {
+            // Display a success message
+            document.getElementById("message").textContent =
+              "Data submitted successfully!";
             document.getElementById("message").style.display = "block";
-            document.getElementById("submit-button").disabled = true;
+            document.getElementById("message").style.backgroundColor = "green";
+            document.getElementById("message").style.color = "beige";
+            document.getElementById("submit-button").disabled = false;
+            document.getElementById("form").reset();
 
-            // Collect the form data
-            var formData = new FormData(this);
-            var keyValuePairs = [];
-            for (var pair of formData.entries()) {
-                keyValuePairs.push(pair[0] + "=" + pair[1]);
-            }
-
-            var formDataString = keyValuePairs.join("&");
-
-            // Send a POST request to your Google Apps Script
-            fetch("https://script.google.com/macros/s/AKfycbw-ULJUSG-ko-mRw6KLjQ00jJd9z7QbWsnlkiqzUVh0KPgXWOiwhTFfK8EJjpUoXBTD/exec", {
-                redirect: "follow",
-                method: "POST",
-                body: formDataString,
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8",
-                },
-            })
-            .then(function (response) {
-                // Check if the request was successful
-                if (response) {
-                    return response; // Assuming your script returns JSON response
-                } else {
-                    throw new Error("Failed to submit the form.");
-                }
-            })
-            .then(function (data) {
-                // Display a success message
-                document.getElementById("message").textContent = "Formulario enviado con éxito.";
-                document.getElementById("message").style.display = "block";
-                document.getElementById("message").style.backgroundColor = "green";
-                document.getElementById("message").style.color = "beige";
-                document.getElementById("submit-button").disabled = false;
-                document.getElementById("form").reset();
-
-                setTimeout(function () {
-                    document.getElementById("message").textContent = "";
-                    document.getElementById("message").style.display = "none";
-                }, 2600);
-            })
-            .catch(function (error) {
-                // Handle errors
-                console.error(error);
-                document.getElementById("message").textContent = "An error occurred while submitting the form.";
-                document.getElementById("message").style.display = "block";
-            });
-        });
+            setTimeout(function () {
+              document.getElementById("message").textContent = "";
+              document.getElementById("message").style.display = "none";
+            }, 2600);
+          })
+          .catch(function (error) {
+            // Handle errors, you can display an error message here
+            console.error(error);
+            document.getElementById("message").textContent =
+              "An error occurred while submitting the form.";
+            document.getElementById("message").style.display = "block";
+          });
+      });
     </script>
-</body>
+  </body>
 </html>
